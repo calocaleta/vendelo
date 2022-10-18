@@ -1,9 +1,9 @@
 class ProductsController < ApplicationController
     def index
-        @products = Product.all
+        @products = Product.all.with_attached_photo
     end
     def show
-        @product = Product.find(params[:id])
+        product
     end
     def new
         @product = Product.new
@@ -18,20 +18,17 @@ class ProductsController < ApplicationController
         end
     end
     def edit
-        @product = Product.find(params[:id])
+        product
     end
     def update
-        @product = Product.find(params[:id])
-
-        if @product.update(product_params)
+        if product.update(product_params)
             redirect_to products_path, notice: 'Tu producto se ha actualizado correctamente'
         else
             render :edit, status: :unprocessable_entity
         end
     end
     def destroy
-        @product = Product.find(params[:id])
-        @product.destroy
+        product.destroy
 
         redirect_to products_path, notice: 'Tu producto se ha eliminado correctamente', status: :see_other
     end
@@ -40,5 +37,9 @@ class ProductsController < ApplicationController
 
     def product_params
         params.require(:product).permit(:title, :description, :price, :photo)
+    end
+
+    def product
+        @product = Product.find(params[:id])
     end
 end
